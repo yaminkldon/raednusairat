@@ -108,4 +108,7 @@ router.get("/list_uploads/presigned", async (req, res) => {
     return res.json(bucket_contents);
 });
 
-app.listen(5001, () => {});
+const port = process.env.PORT || 5001;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
