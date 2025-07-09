@@ -1,21 +1,20 @@
-// index.js or main.js in your Cloud Code
 const admin = require('firebase-admin');
+const express = require('express');
+const app = express();
+app.use(express.json());
 
 admin.initializeApp({
-  credential: admin.credential.cert(require('./serviceAccountKey.json')),
+  credential: admin.credential.cert(require('./serviceAccountKey.json'))
 });
 
-Parse.Cloud.define('subscribeToTopic', async (request) => {
-  const token = request.params.token;
-
-  if (!token) {
-    throw new Error('No token provided');
-  }
-
+app.post('/subscribe', async (req, res) => {
+  const { token } = req.body;
   try {
     await admin.messaging().subscribeToTopic(token, 'all');
-    return { success: true };
+    res.send({ success: true });
   } catch (e) {
-    throw new Error(e.message);
+    res.status(500).send({ error: e.message });
   }
 });
+
+app.listen(3000);
